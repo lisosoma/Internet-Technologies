@@ -25,27 +25,32 @@
   </header>
   <main>
     <div class="tm-tasklist">
+      <div>Добавление рейса</div>
       <input
-        type="text"
-        placeholder="Новый рейс"
-        id="add-tasklist-input"
+              type="text"
+              placeholder="Название рейса"
+              id="name-input"
       />
-      <button
-        type="button"
-        id="tm-tasklist-add-tasklist"
-      >
-        Добавить рейс
-      </button>
       <input
               type="text"
               placeholder="Пункт назначения"
-              id="add-city-input"
+              id="city-input"
+      />
+      <input
+              type="time"
+              placeholder="Время"
+              id="time-input"
+      />
+      <input
+              type="number"
+              placeholder="Кол-во свободных мест"
+              id="counter-input"
       />
       <button
               type="button"
-              id="tm-tasklist-add-city"
+              id="tm-tasklist-add-tasklist"
       >
-        Добавить пункт назначения
+        Добавить рейс
       </button>
     </div>
   </main>

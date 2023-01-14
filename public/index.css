@@ -119,13 +119,14 @@ main {
   margin-bottom: 4vh;
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-evenly;
   align-items: flex-start;
   row-gap: 4vh;
   column-gap: calc(8% / 3);
 }
 
 .tm-tasklist {
-  width: 23%;
+  min-width: 23%;
   box-sizing: border-box;
   border-radius: 1vw;
   padding: 1vw 1.2vw;
@@ -143,12 +144,15 @@ main {
 }
 
 #tm-tasklist-add-tasklist {
-  border: none;
   background: none;
-  margin-bottom: 0;
   font-weight: 400;
   color: var(--dark-blue-color);
   font-size: clamp(0.75rem, 2vw, 2rem);
+  border: solid 1px var(--dark-blue-color);
+  padding: 5px;
+  border-radius: 10000px;
+  width: 100%;
+  margin: 5px 0;
 }
 
 #tm-tasklist-add-tasklist:hover {
@@ -164,15 +168,23 @@ main {
 }
 
 .tm-tasklist-add-task {
-  border: none;
   background: none;
   font-size: clamp(0.7rem, 1.5vw, 1.5rem);
   color: var(--dark-grey-color);
+  border: solid 1px gray;
+  padding: 5px;
+  border-radius: 10000px;
+  width: 100%;
+  margin: 5px 0;
 }
 
-.tm-tasklist-add-task:hover {
+.tm-tasklist-add-task:not([disabled]):hover {
   font-weight: 600;
   cursor: pointer;
+}
+
+.tm-tasklist-add-task[disabled] {
+  color: gray;
 }
 
 .tm-tasklist-task {
@@ -264,4 +276,22 @@ main {
 #add-tasklist-input:hover,
 #add-tasklist-input:focus {
   opacity: 1;
+}
+
+
+.tm-tasklist input {
+  background: none;
+  border: none;
+  padding: 5px;
+  margin: 5px 0;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 1000px;
+  transition: all 0.3s ease;
+  outline: solid 1px transparent;
+}
+.tm-tasklist input:focus {
+  outline-color: #b735ef;
+  outline-offset: 5px;
+  background: #00F1;
 }

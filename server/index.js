@@ -6,7 +6,7 @@ import { readData, writeData } from './fileUtils.js';
 const app = express();
 
 const hostname = 'localhost';
-const port = 4321;
+const port = 4320;
 
 const tasklists = [];
 
@@ -43,11 +43,24 @@ app.get('/tasklists', (request, response) => {
 
 // Создание нового списка задач
 app.post('/tasklists', async (request, response) => {
-  console.log(request);
-  const { tasklistName } = request.body;
-  const { city } = request.body;
-  const { time } = request.body;
-  const { counter } = request.body;
+  const { tasklistName, city, time, counter } = request.body;
+
+  if (
+      tasklistName == '' ||
+      city == '' ||
+      time == '' ||
+      counter == '' ||
+      typeof counter !== 'string' || isNaN(counter) || !parseFloat(counter) || Number(counter) <= 0
+  ) {
+    response
+        .setHeader('Content-Type', 'application/json')
+        .status(400)
+        .json({
+          info: `Bad request`
+        });
+    return;
+  }
+
   tasklists.push({
     tasklistName,
     city,
@@ -56,7 +69,6 @@ app.post('/tasklists', async (request, response) => {
     tasks: []
   });
   await writeData(tasklists);
-
   response
     .setHeader('Content-Type', 'application/json')
     .status(200)
