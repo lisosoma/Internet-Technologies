@@ -16,10 +16,10 @@ app.use(express.json());
 // Middleware для логирования запросов
 app.use((request, response, next) => {
   console.log(
-    (new Date()).toISOString(),
-    request.ip,
-    request.method,
-    request.originalUrl
+      (new Date()).toISOString(),
+      request.ip,
+      request.method,
+      request.originalUrl
   );
 
   next();
@@ -27,7 +27,7 @@ app.use((request, response, next) => {
 
 // Middleware для раздачи статики
 app.use('/', express.static(
-  resolve(__dirname, '..', 'public')
+    resolve(__dirname, '..', 'public')
 ));
 
 //---------------------------------------------------
@@ -36,9 +36,9 @@ app.use('/', express.static(
 // Получение весх списков задач
 app.get('/tasklists', (request, response) => {
   response
-    .setHeader('Content-Type', 'application/json')
-    .status(200)
-    .json(tasklists);
+      .setHeader('Content-Type', 'application/json')
+      .status(200)
+      .json(tasklists);
 });
 
 // Создание нового списка задач
@@ -70,11 +70,11 @@ app.post('/tasklists', async (request, response) => {
   });
   await writeData(tasklists);
   response
-    .setHeader('Content-Type', 'application/json')
-    .status(200)
-    .json({
-      info: `Tasklist '${tasklistName}' was successfully created`
-    });
+      .setHeader('Content-Type', 'application/json')
+      .status(200)
+      .json({
+        info: `Tasklist '${tasklistName}' was successfully created`
+      });
 });
 
 // Создание новой задачи
@@ -84,22 +84,22 @@ app.post('/tasklists/:tasklistId/tasks', async (request, response) => {
 
   if (tasklistId < 0 || tasklistId >= tasklists.length) {
     response
-      .setHeader('Content-Type', 'application/json')
-      .status(404)
-      .json({
-        info: `There is no tasklist with id = ${tasklistId}`
-      });
+        .setHeader('Content-Type', 'application/json')
+        .status(404)
+        .json({
+          info: `There is no tasklist with id = ${tasklistId}`
+        });
     return;
   }
 
   tasklists[tasklistId].tasks.push(taskName);
   await writeData(tasklists);
   response
-    .setHeader('Content-Type', 'application/json')
-    .status(200)
-    .json({
-      info: `Task '${taskName}' was successfully added in tasklist '${tasklists[tasklistId].tasklistName}'`
-    });
+      .setHeader('Content-Type', 'application/json')
+      .status(200)
+      .json({
+        info: `Task '${taskName}' was successfully added in tasklist '${tasklists[tasklistId].tasklistName}'`
+      });
 });
 
 // Изменение задачи
@@ -109,25 +109,25 @@ app.put('/tasklists/:tasklistId/tasks/:taskId', async (request, response) => {
   const taskId = Number(request.params.taskId);
 
   if (tasklistId < 0 || tasklistId >= tasklists.length
-    || taskId < 0 || taskId >= tasklists[tasklistId].tasks.length) {
+      || taskId < 0 || taskId >= tasklists[tasklistId].tasks.length) {
     response
-      .setHeader('Content-Type', 'application/json')
-      .status(404)
-      .json({
-        info: `There is no tasklist with id = ${
-          tasklistId} or task with id = ${taskId}`
-      });
+        .setHeader('Content-Type', 'application/json')
+        .status(404)
+        .json({
+          info: `There is no tasklist with id = ${
+              tasklistId} or task with id = ${taskId}`
+        });
     return;
   }
 
   tasklists[tasklistId].tasks[taskId] = newTaskName;
   await writeData(tasklists);
   response
-    .setHeader('Content-Type', 'application/json')
-    .status(200)
-    .json({
-      info: `Task №${taskId} was successfully edited in tasklist '${tasklists[tasklistId].tasklistName}'`
-    });
+      .setHeader('Content-Type', 'application/json')
+      .status(200)
+      .json({
+        info: `Task №${taskId} was successfully edited in tasklist '${tasklists[tasklistId].tasklistName}'`
+      });
 });
 
 // Удаление задачи
@@ -136,14 +136,14 @@ app.delete('/tasklists/:tasklistId/tasks/:taskId', async (request, response) => 
   const taskId = Number(request.params.taskId);
 
   if (tasklistId < 0 || tasklistId >= tasklists.length
-    || taskId < 0 || taskId >= tasklists[tasklistId].tasks.length) {
+      || taskId < 0 || taskId >= tasklists[tasklistId].tasks.length) {
     response
-      .setHeader('Content-Type', 'application/json')
-      .status(404)
-      .json({
-        info: `There is no tasklist with id = ${
-          tasklistId} or task with id = ${taskId}`
-      });
+        .setHeader('Content-Type', 'application/json')
+        .status(404)
+        .json({
+          info: `There is no tasklist with id = ${
+              tasklistId} or task with id = ${taskId}`
+        });
     return;
   }
 
@@ -151,11 +151,11 @@ app.delete('/tasklists/:tasklistId/tasks/:taskId', async (request, response) => 
   tasklists[tasklistId].tasks.splice(taskId, 1);
   await writeData(tasklists);
   response
-    .setHeader('Content-Type', 'application/json')
-    .status(200)
-    .json({
-      info: `Task '${deletedTaskName}' was successfully deleted from tasklist '${tasklists[tasklistId].tasklistName}'`
-    });
+      .setHeader('Content-Type', 'application/json')
+      .status(200)
+      .json({
+        info: `Task '${deletedTaskName}' was successfully deleted from tasklist '${tasklists[tasklistId].tasklistName}'`
+      });
 });
 
 // Перенос задачи с одного спика в другой
@@ -164,15 +164,15 @@ app.patch('/tasklists/:tasklistId', async (request, response) => {
   const { toTasklistId, taskId } = request.body;
 
   if (fromTasklistId < 0 || fromTasklistId >= tasklists.length
-    || taskId < 0 || taskId >= tasklists[fromTasklistId].tasks.length
-    || toTasklistId < 0 || toTasklistId >= tasklists.length) {
+      || taskId < 0 || taskId >= tasklists[fromTasklistId].tasks.length
+      || toTasklistId < 0 || toTasklistId >= tasklists.length) {
     response
-      .setHeader('Content-Type', 'application/json')
-      .status(404)
-      .json({
-        info: `There is no tasklist with id = ${
-          fromTasklistId} of ${toTasklistId} or task with id = ${taskId}`
-      });
+        .setHeader('Content-Type', 'application/json')
+        .status(404)
+        .json({
+          info: `There is no tasklist with id = ${
+              fromTasklistId} of ${toTasklistId} or task with id = ${taskId}`
+        });
     return;
   }
 
@@ -183,14 +183,14 @@ app.patch('/tasklists/:tasklistId', async (request, response) => {
 
   await writeData(tasklists);
   response
-    .setHeader('Content-Type', 'application/json')
-    .status(200)
-    .json({
-      info: `Task '${movedTaskName}' was successfully moved from tasklist '${tasklists[fromTasklistId].tasklistName}' to tasklist '${
-        tasklists[toTasklistId].tasklistName
-      }'`
-    });
-}); 
+      .setHeader('Content-Type', 'application/json')
+      .status(200)
+      .json({
+        info: `Task '${movedTaskName}' was successfully moved from tasklist '${tasklists[fromTasklistId].tasklistName}' to tasklist '${
+            tasklists[toTasklistId].tasklistName
+        }'`
+      });
+});
 
 //---------------------------------------------------
 
@@ -204,9 +204,12 @@ app.listen(port, hostname, async (err) => {
   console.log(`Out server started at http://${hostname}:${port}`);
 
   const tasklistsFromFile = await readData();
-  tasklistsFromFile.forEach(({ tasklistName, tasks }) => {
+  tasklistsFromFile.forEach(({ tasklistName, tasks, city, time, counter }) => {
     tasklists.push({
       tasklistName,
+      city,
+      time,
+      counter,
       tasks: [...tasks]
     });
   });

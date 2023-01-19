@@ -1,3 +1,5 @@
+const API_URL = 'http://localhost:4320';
+
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.init();
@@ -5,90 +7,90 @@ document.addEventListener('DOMContentLoaded', () => {
 
 class AppModel {
   static async getTasklists() {
-    const tasklistsRes = await fetch('http://localhost:4320/tasklists');
+    const tasklistsRes = await fetch(`${API_URL}/tasklists`);
     return await tasklistsRes.json();
   }
 
   static async addTasklist(tasklistName, city, time, counter) {
     const result = await fetch(
-      'http://localhost:4320/tasklists',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ tasklistName, city, time, counter })
-      }
+        `${API_URL}/tasklists`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ tasklistName, city, time, counter })
+        }
     );
 
     const resultData = await result.json();
 
     return result.status === 200
-      ? resultData
-      : Promise.reject(resultData);
+        ? resultData
+        : Promise.reject(resultData);
   }
 
   static async addTask({
-    tasklistId,
-    taskName
-  }) {
+                         tasklistId,
+                         taskName
+                       }) {
     const result = await fetch(
-      `http://localhost:4320/tasklists/${tasklistId}/tasks`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ taskName })
-      }
+        `${API_URL}/tasklists/${tasklistId}/tasks`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ taskName })
+        }
     );
 
     const resultData = await result.json();
 
     return result.status === 200
-      ? resultData
-      : Promise.reject(resultData);
+        ? resultData
+        : Promise.reject(resultData);
   }
 
   static async editTask({
-    tasklistId,
-    taskId,
-    newTaskName
-  }) {
+                          tasklistId,
+                          taskId,
+                          newTaskName
+                        }) {
     const result = await fetch(
-      `http://localhost:4320/tasklists/${tasklistId}/tasks/${taskId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ newTaskName })
-      }
+        `${API_URL}/tasklists/${tasklistId}/tasks/${taskId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ newTaskName })
+        }
     );
 
     const resultData = await result.json();
 
     return result.status === 200
-      ? resultData
-      : Promise.reject(resultData);
+        ? resultData
+        : Promise.reject(resultData);
   }
 
   static async deleteTask({
-    tasklistId,
-    taskId
-  }) {
+                            tasklistId,
+                            taskId
+                          }) {
     const result = await fetch(
-      `http://localhost:4321/tasklists/${tasklistId}/tasks/${taskId}`,
-      {
-        method: 'DELETE'
-      }
+        `${API_URL}/tasklists/${tasklistId}/tasks/${taskId}`,
+        {
+          method: 'DELETE'
+        }
     );
 
     const resultData = await result.json();
 
     return result.status === 200
-      ? resultData
-      : Promise.reject(resultData);
+        ? resultData
+        : Promise.reject(resultData);
   }
 }
 
@@ -102,7 +104,7 @@ class App {
     const cityInput = document.getElementById('city-input');
     const timeInput = document.getElementById('time-input');
     const counterInput = document.getElementById('counter-input');
-    
+
     const name = nameInput.value;
     const city = cityInput.value;
     const time = timeInput.value;
@@ -125,7 +127,12 @@ class App {
       tlTasks: [],
     });
     this.tasklists.push(newTaskList);
-    newTaskList.render();
+    this.tasklists.sort((a, b) => {
+      const splitA = a.tlTime.split(':');
+      const splitB = b.tlTime.split(':');
+      return (Number(splitA[0]) * 60 + Number(splitA[1])) - (Number(splitB[0]) * 60 + Number(splitB[1]));
+    });
+    this.reRenderTasklists();
   };
 
   async init() {
@@ -141,39 +148,53 @@ class App {
       });
 
       this.tasklists.push(newTasklist);
-      newTasklist.render();
-      newTasklist.rerenderTasks();
     });
+    this.tasklists.sort((a, b) => {
+      const splitA = a.tlTime.split(':');
+      const splitB = b.tlTime.split(':');
+      return (Number(splitA[0]) * 60 + Number(splitA[1])) - (Number(splitB[0]) * 60 + Number(splitB[1]));
+    });
+    this.reRenderTasklists();
 
     document.getElementById('tm-tasklist-add-tasklist')
-      .addEventListener(
-        'click',
-        (event) => {
-          this.createTaskList();
-        }
-      );
+        .addEventListener(
+            'click',
+            (event) => {
+              this.createTaskList();
+            }
+        );
 
     document.querySelector('.toggle-switch input')
-      .addEventListener(
-        'change',
-        ({ target: { checked } }) => {
-          checked
-            ? document.body.classList.add('dark-theme')
-            : document.body.classList.remove('dark-theme');
-        }
-      );
+        .addEventListener(
+            'change',
+            ({ target: { checked } }) => {
+              checked
+                  ? document.body.classList.add('dark-theme')
+                  : document.body.classList.remove('dark-theme');
+            }
+        );
+  }
+
+  reRenderTasklists() {
+    const tasksElements = document.querySelectorAll('main .deletable-tasklist');
+    tasksElements.forEach((element) => element.remove())
+
+    this.tasklists.forEach((tasklist) => {
+      tasklist.render();
+      tasklist.rerenderTasks();
+    })
   }
 }
 
 class Tasklist {
   constructor({
-    tlName,
-    tlCity,
-    tlTime,
-    tlCounter,
-    tlID,
-    tasks,
-  }) {
+                tlName,
+                tlCity,
+                tlTime,
+                tlCounter,
+                tlID,
+                tasks,
+              }) {
     this.tlName = tlName;
     this.tlCity = tlCity;
     this.tlTime = tlTime;
@@ -202,12 +223,12 @@ class Tasklist {
 
   addTask = (taskName) => {
     document.querySelector(`#${this.tlID} ul`)
-      .appendChild(
-        this.renderTask({
-          taskID: `${this.tlID}-T${this.tasks.length}`,
-          taskName
-        })
-      );
+        .appendChild(
+            this.renderTask({
+              taskID: `${this.tlID}-T${this.tasks.length}`,
+              taskName
+            })
+        );
 
     this.tasks.push(taskName);
     this.tlCounter = this.tlMaxCounter - this.tasks.length;
@@ -236,6 +257,8 @@ class Tasklist {
 
   deleteTask = (taskIndex) => {
     this.tasks.splice(taskIndex, 1);
+    this.tlCounter += 1;
+    this.rerenderCounter();
     this.rerenderTasks();
   };
 
@@ -271,10 +294,10 @@ class Tasklist {
 
     this.tasks.forEach((taskName, taskIndex) => {
       tasklist.appendChild(
-        this.renderTask({
-          taskID: `${this.tlID}-T${taskIndex}`,
-          taskName
-        })
+          this.renderTask({
+            taskID: `${this.tlID}-T${taskIndex}`,
+            taskName
+          })
       );
     });
   };
@@ -303,8 +326,8 @@ class Tasklist {
     const editButton = document.createElement('button');
     editButton.type = 'button';
     editButton.classList.add(
-      'tm-tasklist-task-controls-button',
-      'edit-icon'
+        'tm-tasklist-task-controls-button',
+        'edit-icon'
     );
     editButton.addEventListener('click', () => this.onEditTask(taskID));
     lowerRow.appendChild(editButton);
@@ -312,8 +335,8 @@ class Tasklist {
     const deleteButton = document.createElement('button');
     deleteButton.type = 'button';
     deleteButton.classList.add(
-      'tm-tasklist-task-controls-button',
-      'delete-icon'
+        'tm-tasklist-task-controls-button',
+        'delete-icon'
     );
     deleteButton.addEventListener('click', () => this.onDeleteTaskButtonClick(taskID));
     lowerRow.appendChild(deleteButton);
@@ -327,7 +350,7 @@ class Tasklist {
 
   render() {
     const tasklist = document.createElement('div');
-    tasklist.classList.add('tm-tasklist');
+    tasklist.classList.add('tm-tasklist', 'deletable-tasklist');
     tasklist.id = this.tlID;
 
     const header = document.createElement('header');
@@ -375,9 +398,11 @@ class Tasklist {
     const counterElem = thisTasksList.querySelector('.counter-info');
     counterElem.innerHTML = 'Мест осталось: ' + this.tlCounter;
 
+    const button = thisTasksList.querySelector('.tm-tasklist-add-task');
     if (this.tlCounter <= 0) {
-      const button = thisTasksList.querySelector('.tm-tasklist-add-task');
       button.setAttribute("disabled", "");
+    } else {
+      button.removeAttribute("disabled");
     }
   }
 }

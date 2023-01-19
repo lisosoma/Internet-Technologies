@@ -1,1 +1,1 @@
-[{"tasklistName":"Классный рейс","city":"Бразилиа","time":"05:35","counter":"3","tasks":["Сергеев","Petrov","Mr Name"]},{"tasklistName":"Очень крутой рейс","city":"Москва","time":"08:35","counter":"10","tasks":["Семёнова"]}]
+[{"tasklistName":"Классный рейс","tasks":["Сергеев","Petrov","Mr Name"]},{"tasklistName":"Очень крутой рейс","tasks":["Семёнова"]},{"tasklistName":"Классный рейс","city":"Астана","time":"23:20","counter":"12","tasks":["Горелкина","Фёдорова"]},{"tasklistName":"Рейс Рейс","city":"Санкт-Петербург","time":"22:20","counter":"2","tasks":["Петров","Иванов"]}]
